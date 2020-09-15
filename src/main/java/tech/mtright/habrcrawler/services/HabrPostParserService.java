@@ -1,26 +1,26 @@
 package tech.mtright.habrcrawler.services;
 
 import lombok.SneakyThrows;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import tech.mtright.habrcrawler.cache.HubCache;
 import tech.mtright.habrcrawler.cache.TagCache;
 import tech.mtright.habrcrawler.model.Hub;
 import tech.mtright.habrcrawler.model.Post;
 import tech.mtright.habrcrawler.model.Tag;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
-public class HabrLinkCrawlerService implements LinkCrawlerService {
+import static tech.mtright.habrcrawler.utils.ParserUtils.getDocumentFromLink;
+
+@Service
+public class HabrPostParserService implements PostParserService {
     private static final String TITLE = "h1 span";
     private static final String AUTHOR_NAME = "user-info__nickname user-info__nickname_small";
     private static final String POST_BODY = "#post-content-body";
@@ -74,7 +74,7 @@ public class HabrLinkCrawlerService implements LinkCrawlerService {
     private int getViews(Document document) {
         String views = document.getElementsByClass(POST_VIEWS).text();
         if (views.contains("k")) {
-            return (int) (Double.parseDouble(views.replace("k","")) * 1000);
+            return (int) (Double.parseDouble(views.replace("k", "").replace(",", ".")) * 1000);
         } else {
             return Integer.parseInt(views);
         }
@@ -105,13 +105,5 @@ public class HabrLinkCrawlerService implements LinkCrawlerService {
         } else {
             return null;
         }
-    }
-
-    private Document getDocumentFromLink(String url) throws IOException {
-        return Jsoup.connect(url)
-                .userAgent("Mozilla")
-                .timeout(30000)
-                .referrer("http://google.com")
-                .get();
     }
 }
