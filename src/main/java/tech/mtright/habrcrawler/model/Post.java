@@ -2,6 +2,7 @@ package tech.mtright.habrcrawler.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -23,6 +24,9 @@ public class Post {
     String title;
     String link;
     String author;
+    int votes;
+    int views;
+    @Nullable
     String company;
     @ManyToMany(cascade = CascadeType.ALL)
     Set<Tag> tags;
