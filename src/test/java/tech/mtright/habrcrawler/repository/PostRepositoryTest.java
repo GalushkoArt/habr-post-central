@@ -1,5 +1,6 @@
 package tech.mtright.habrcrawler.repository;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,9 +20,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
-class PostRepositoryTest {
+public class PostRepositoryTest {
     @Autowired
     private PostRepository postRepository;
 
@@ -66,7 +69,7 @@ class PostRepositoryTest {
                 .tags(Set.of(Tag.builder().name("Tag1").build()))
                 .hubs(Set.of(Hub.builder().name("hub1").build()))
                 .title("Title3")
-                .postId(124580)
+                .postId(124585)
                 .views(44444)
                 .votes(44)
                 .link("https://somelink3.com")
@@ -88,78 +91,87 @@ class PostRepositoryTest {
 
     @Test
     @Transactional
+    public void findByPostIdInTest() {
+        List<Post> posts = postRepository.findByPostIdIn(List.of(124567, 124568, 124580));
+        assertThat(posts).size().isEqualTo(3);
+    }
+
+    @Test
+    @Transactional
     public void findByTitleIgnoreCaseTest() {
         Optional<Post> post = postRepository.findByTitleIgnoreCase("Title");
-        Assert.assertNotNull(post.orElse(null));
+        assertThat(post).isNotEmpty();
     }
 
     @Test
     @Transactional
     public void findAllByAuthorIgnoreCaseTest() {
         List<Post> postList = postRepository.findAllByAuthorIgnoreCase("Petya");
-        Assert.assertEquals(2, postList.size());
+        assertThat(postList).size().isEqualTo(2);
     }
 
     @Test
     @Transactional
     public void findAllByCompanyIgnoreCaseTest() {
         List<Post> postList = postRepository.findAllByCompanyIgnoreCase("Some company");
-        Assert.assertEquals(2, postList.size());
+        assertThat(postList).size().isEqualTo(2);
     }
 
     @Test
     @Transactional
     public void findAllByHubsNameIgnoreCaseTest() {
         List<Post> postList = postRepository.findAllByHubsNameIgnoreCase("hub");
-        Assert.assertEquals(3, postList.size());
+        assertThat(postList).size().isEqualTo(3);
     }
 
     @Test
     @Transactional
     public void findAllByTagsNameIgnoreCaseTest() {
         List<Post> postList = postRepository.findAllByTagsNameIgnoreCase("Tag");
-        Assert.assertEquals(3, postList.size());
+        assertThat(postList).size().isEqualTo(3);
     }
 
     @Test
     @Transactional
     public void findTop10ByCompanyIgnoreCaseOrderByVotesDescTest() {
         List<Post> postList = postRepository.findTop10ByCompanyIgnoreCaseOrderByVotesDesc("Some company");
-        Assert.assertTrue(isListDescendingBy(postList, Post::getViews));
-        Assert.assertEquals(2, postList.size());
+        assertThat(isListDescendingBy(postList, Post::getViews));
+        assertThat(postList).size().isEqualTo(2);
     }
 
     @Test
     @Transactional
     public void findTop10ByAuthorIgnoreCaseOrderByVotesDescTest() {
         List<Post> postList = postRepository.findTop10ByAuthorIgnoreCaseOrderByVotesDesc("Petya");
-        Assert.assertTrue(isListDescendingBy(postList, Post::getViews));
-        Assert.assertEquals(2, postList.size());
+        assertThat(isListDescendingBy(postList, Post::getViews));
+        assertThat(postList).size().isEqualTo(2);
     }
 
     @Test
     @Transactional
     public void findTop10ByHubsNameIgnoreCaseOrderByVotesDescTest() {
         List<Post> postList = postRepository.findTop10ByHubsNameIgnoreCaseOrderByVotesDesc("hub");
-        Assert.assertTrue(isListDescendingBy(postList, Post::getViews));
-        Assert.assertEquals(3, postList.size());
+        assertThat(isListDescendingBy(postList, Post::getViews));
+        assertThat(postList).size().isEqualTo(3);
     }
 
     @Test
     @Transactional
     public void findTop10ByTagsNameIgnoreCaseOrderByVotesDescTest() {
         List<Post> postList = postRepository.findTop10ByTagsNameIgnoreCaseOrderByVotesDesc("tag");
-        Assert.assertTrue(isListDescendingBy(postList, Post::getViews));
-        Assert.assertEquals(3, postList.size());
+        assertThat(isListDescendingBy(postList, Post::getViews));
+        assertThat(postList).size().isEqualTo(3);
     }
 
-    private static <T> boolean isListDescendingBy(List<T> list, Function<T, Integer> valueProvider) {
-        int max = Integer.MAX_VALUE;
-        for (T t : list) {
-            if (valueProvider.apply(t) <= max) {
-                max = valueProvider.apply(t);
-            } else {
-                return false;
+    public static <T, R extends Comparable<R>> boolean isListDescendingBy(List<T> list, Function<T, R> valueProvider) {
+        if (list.size() > 0) {
+            R max = valueProvider.apply(list.get(0));
+            for (T t : list) {
+                if (valueProvider.apply(t).compareTo(max) <= 0) {
+                    max = valueProvider.apply(t);
+                } else {
+                    return false;
+                }
             }
         }
         return true;

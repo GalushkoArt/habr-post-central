@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import tech.mtright.habrcrawler.dto.HabrUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,12 @@ import static tech.mtright.habrcrawler.utils.ParserUtils.getDocumentFromLink;
 @Service
 public class HabrSearchService implements SiteSearchService {
     private static final String POSTS_LIST = "div.posts_list";
-    public static final String HUBS_AND_COMPANIES_SERARCH = "https://habr.com/ru/search/?target_type=hubs&order_by=relevance&q=";
-    public static final String HABR_HOME_PAGE = "https://habr.com/ru/all/";
-    public static final String RESULT_TITLE = "a.list-snippet__title-link";
+    private static final String HUBS_AND_COMPANIES_SERARCH = "https://habr.com/ru/search/?target_type=hubs&order_by=relevance&q=";
+    private static final String HABR_HOME_PAGE = "https://habr.com/ru/all/";
+    private static final String RESULT_TITLE = "a.list-snippet__title-link";
+    private static final String USER_SEARCH = "https://habr.com/ru/search/?target_type=users&order_by=relevance&q=";
+    private static final String RESULT_USER_NAME = "a.list-snippet__fullname";
+    private static final String TAG_SEARCH = "https://habr.com/ru/search/?target_type=posts&order_by=relevance&q=[%s]";
 
     @SneakyThrows
     @Override
@@ -40,6 +44,28 @@ public class HabrSearchService implements SiteSearchService {
     @Override
     public List<String> searchHubsByName(String name) {
         return searchTargetByName(name, "hub");
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean isTagRelevant(String tag) {
+        Document doc = getDocumentFromLink(String.format(TAG_SEARCH, tag));
+        return doc.getElementsByClass("page__body").select("li").size() > 0;
+    }
+
+    @SneakyThrows
+    @Override
+    public List<HabrUser> searchUsersByName(String name) {
+        Document doc = getDocumentFromLink(USER_SEARCH + name);
+        List<HabrUser> users = new ArrayList<>();
+        Elements results = doc.getElementById("peoples").select("li");
+        for (Element result : results) {
+            result = result.selectFirst(RESULT_USER_NAME);
+            String fullName = result.text();
+            String nick = result.attr("href").split("/")[5];
+            users.add(HabrUser.builder().fullName(fullName).nickName(nick).build());
+        }
+        return users;
     }
 
     @SneakyThrows

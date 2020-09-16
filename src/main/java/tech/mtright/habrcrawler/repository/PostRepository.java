@@ -14,6 +14,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @RestResource(path = "byId")
     Optional<Post> findByPostId(@Param("id") int id);
 
+    @RestResource(path = "byIds")
+    List<Post> findByPostIdIn(@Param("ids") List<Integer> ids);
+
     @RestResource(path = "byTitle")
     Optional<Post> findByTitleIgnoreCase(@Param("title") String title);
 

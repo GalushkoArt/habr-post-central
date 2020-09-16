@@ -6,14 +6,17 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(indexes = {@Index(columnList = "postId")})
 public class Post {
     @Id
     @GeneratedValue
@@ -32,4 +35,24 @@ public class Post {
     Set<Tag> tags;
     @ManyToMany(cascade = CascadeType.ALL)
     Set<Hub> hubs;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return postId == post.postId &&
+                date.equals(post.date) &&
+                title.equals(post.title) &&
+                link.equals(post.link) &&
+                Objects.equals(author, post.author) &&
+                Objects.equals(company, post.company) &&
+                Objects.equals(tags, post.tags) &&
+                Objects.equals(hubs, post.hubs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(postId, date, title, link, author, company, tags, hubs);
+    }
 }

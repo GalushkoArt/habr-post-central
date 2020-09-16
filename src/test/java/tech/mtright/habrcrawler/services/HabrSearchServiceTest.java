@@ -22,7 +22,7 @@ public class HabrSearchServiceTest {
 
     @Test
     public void searchExactCompanyByNameTest() {
-        assertThat(searchService.searchCompaniesByName("Райффайзенбанк").get(0)).containsIgnoringCase("Райффайзенбанк");
+        assertThat(searchService.searchCompaniesByName("Дойче Банк").get(0)).containsIgnoringCase("Дойче банк");
     }
 
     @Test
@@ -37,5 +37,26 @@ public class HabrSearchServiceTest {
     @Test
     public void searchHubsByNameWithMultipleResultsTest() {
         assertThat(searchService.searchCompaniesByName("наука")).hasSizeGreaterThan(1);
+    }
+
+    @Test
+    public void searchExactUserByNameTest() {
+        assertThat(searchService.searchUsersByName("EvgenyBorisov").get(0).getFullName()).isEqualTo("Борисов Евгений");
+        assertThat(searchService.searchUsersByName("EvgenyBorisov").get(0).getNickName()).isEqualTo("EvgenyBorisov");
+    }
+
+    @Test
+    public void searchUsersByNameWithMultipleResultsTest() {
+        assertThat(searchService.searchUsersByName("Вася")).hasSizeGreaterThan(1);
+    }
+
+    @Test
+    public void isRelevantTagRelevantTest() {
+        assertThat(searchService.isTagRelevant("финансы")).isTrue();
+    }
+
+    @Test
+    public void isIrrelevantTagIrrelevantTest() {
+        assertThat(searchService.isTagRelevant("5d5r37utreyey7")).isFalse();
     }
 }
