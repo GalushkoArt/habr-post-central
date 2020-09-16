@@ -1,6 +1,7 @@
 package tech.mtright.habrcrawler.services;
 
 import lombok.SneakyThrows;
+import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -15,6 +16,7 @@ import tech.mtright.habrcrawler.model.Tag;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static tech.mtright.habrcrawler.utils.ParserUtils.getDocumentFromLink;
@@ -40,9 +42,14 @@ public class HabrPostParserService implements PostParserService {
     TagCache tagCache;
 
     @SneakyThrows
-    public Post parsePost(int id) {
+    public Optional<Post> parsePost(int id) {
         String url = "https://habr.com/ru/post/" + id;
-        Document doc = getDocumentFromLink(url);
+        Document doc;
+        try {
+            doc = getDocumentFromLink(url);
+        } catch (HttpStatusException e) {
+            return Optional.empty();
+        }
         Element article = doc.selectFirst("article");
 
         String title = article.selectFirst(TITLE).text();
@@ -57,7 +64,7 @@ public class HabrPostParserService implements PostParserService {
         Set<Tag> tags = getTags(article);
         Set<Hub> hubs = getHubs(article);
 
-        return Post.builder()
+        return Optional.of(Post.builder()
                 .author(author)
                 .company(company)
                 .link(link)
@@ -68,7 +75,7 @@ public class HabrPostParserService implements PostParserService {
                 .hubs(hubs)
                 .tags(tags)
                 .date(date)
-                .build();
+                .build());
     }
 
     private int getViews(Document document) {

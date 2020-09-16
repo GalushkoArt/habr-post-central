@@ -39,5 +39,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findTop10ByHubsNameIgnoreCaseOrderByVotesDesc(@Param("hub") String hubName);
 
     @RestResource(path = "topOfTag")
-    List<Post> findTop10ByTagsNameIgnoreCaseOrderByVotesDesc(@Param("tah") String tagName);
+    List<Post> findTop10ByTagsNameIgnoreCaseOrderByVotesDesc(@Param("tag") String tagName);
 }

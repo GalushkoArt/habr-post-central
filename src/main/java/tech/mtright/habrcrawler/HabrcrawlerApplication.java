@@ -8,7 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class HabrcrawlerApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(HabrcrawlerApplication.class, args);
+        SpringApplication.run(HabrcrawlerApplication.class, args);
     }
 
 }
