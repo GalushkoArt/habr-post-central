@@ -1,6 +1,5 @@
 package tech.mtright.habrcrawler.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

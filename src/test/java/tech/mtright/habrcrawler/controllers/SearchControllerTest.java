@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import tech.mtright.habrcrawler.dto.HabrUser;
 import tech.mtright.habrcrawler.services.SiteSearchService;
 
 import java.util.List;
@@ -36,20 +37,40 @@ public class SearchControllerTest {
     public void setUp() {
         Mockito.when(searchService.searchCompaniesByName(anyString())).thenReturn(List.of("Test Bank", "Тестовый Банк"));
         Mockito.when(searchService.searchHubsByName(anyString())).thenReturn(List.of("Test hub", "Тестовый хаб"));
+        Mockito.when(searchService.searchUsersByName(anyString()))
+                .thenReturn(List.of(HabrUser.builder().fullName("Vasiliy").nickName("Vasechka").build(),
+                                    HabrUser.builder().fullName("Пётр").nickName("Петрович").build()));
+        Mockito.when(searchService.isTagRelevant(anyString())).thenReturn(true);
     }
 
     @SneakyThrows
     @Test
     public void getCompaniesByNameTest() {
-        MvcResult result = makeGetRequest("/getCompanies?name=Тестовый%банк");
+        MvcResult result = makeGetRequest("/api/getCompanies?name=Тестовый%банк");
         assertThat(result.getResponse().getContentAsString()).contains("Test Bank").contains("Тестовый Банк");
     }
 
     @SneakyThrows
     @Test
     public void getHubsByNameTest() {
-        MvcResult result = makeGetRequest("/getHubs?name=Тестовый%хаб");
+        MvcResult result = makeGetRequest("/api/getHubs?name=Тестовый%хаб");
         assertThat(result.getResponse().getContentAsString()).contains("Test hub").contains("Тестовый хаб");
+    }
+
+    @SneakyThrows
+    @Test
+    public void isTagRelevantTest() {
+        MvcResult result = makeGetRequest("/api/isTagRelevant?tag=Тестовый%тег");
+        assertThat(result.getResponse().getContentAsString()).contains("true");
+    }
+
+    @SneakyThrows
+    @Test
+    public void findAuthorsByNameTest() {
+        MvcResult result = makeGetRequest("/api/findAuthors?name=Тестовое%имя");
+        assertThat(result.getResponse().getContentAsString())
+                .contains("Vasiliy").contains("Vasechka")
+                .contains("Пётр").contains("Петрович");
     }
 
     private MvcResult makeGetRequest(String getRequest) throws Exception {
