@@ -1,0 +1,5 @@
+server:
+  port: 12153
+spring:
+  application:
+    name: POSTCENTRAL
