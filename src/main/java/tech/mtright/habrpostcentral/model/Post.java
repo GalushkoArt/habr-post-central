@@ -1,5 +1,6 @@
 package tech.mtright.habrpostcentral.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.lang.Nullable;
@@ -21,6 +22,7 @@ import java.util.Set;
 public class Post {
     @Id
     @GeneratedValue
+    @JsonIgnore
     int id;
     int postId;
     @Temporal(TemporalType.TIMESTAMP)

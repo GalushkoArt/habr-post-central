@@ -1,5 +1,6 @@
 package tech.mtright.habrpostcentral.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,9 +22,11 @@ import java.util.Set;
 public class Hub {
     @Id
     @GeneratedValue
+    @JsonIgnore
     int id;
     String name;
     @ManyToMany
+    @JsonIgnore
     Set<Post> posts;
 
     @Override

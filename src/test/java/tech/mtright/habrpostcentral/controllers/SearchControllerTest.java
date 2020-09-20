@@ -1,16 +1,16 @@
 package tech.mtright.habrpostcentral.controllers;
 
 import lombok.SneakyThrows;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest
 @ContextConfiguration(classes = ControllerMockConfiguration.class)
 public class SearchControllerTest {
@@ -33,13 +33,13 @@ public class SearchControllerTest {
     @MockBean
     private SiteSearchService searchService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Mockito.when(searchService.searchCompaniesByName(anyString())).thenReturn(List.of("Test Bank", "Тестовый Банк"));
         Mockito.when(searchService.searchHubsByName(anyString())).thenReturn(List.of("Test hub", "Тестовый хаб"));
         Mockito.when(searchService.searchUsersByName(anyString()))
-                .thenReturn(List.of(HabrUser.builder().fullName("Vasiliy").nickName("Vasechka").build(),
-                                    HabrUser.builder().fullName("Пётр").nickName("Петрович").build()));
+                .thenReturn(List.of(HabrUser.builder().fullName("Vasiliy").name("Vasechka").build(),
+                        HabrUser.builder().fullName("Пётр").name("Петрович").build()));
         Mockito.when(searchService.isTagRelevant(anyString())).thenReturn(true);
     }
 

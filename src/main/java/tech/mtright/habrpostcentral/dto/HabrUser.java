@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HabrUser {
     private String fullName;
-    private String nickName;
+    private String name;
 }

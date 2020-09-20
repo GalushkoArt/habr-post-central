@@ -4,12 +4,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.stereotype.Repository;
 import tech.mtright.habrpostcentral.model.Post;
 
 import java.util.List;
 import java.util.Optional;
 
 @RepositoryRestResource
+@Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
     @RestResource(path = "byId")
     Optional<Post> findByPostId(@Param("id") int id);

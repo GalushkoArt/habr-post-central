@@ -1,13 +1,14 @@
 package tech.mtright.habrpostcentral.repository;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import tech.mtright.habrpostcentral.model.Hub;
 import tech.mtright.habrpostcentral.model.Post;
@@ -21,13 +22,14 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = RepositoryMockConfiguration.class)
 @DataJpaTest
 public class PostRepositoryTest {
     @Autowired
     private PostRepository postRepository;
 
-    @Before
+    @BeforeEach
     @Transactional
     @Rollback(false)
     public void setUp() {

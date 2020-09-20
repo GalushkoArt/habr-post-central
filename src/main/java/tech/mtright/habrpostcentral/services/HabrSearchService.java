@@ -58,12 +58,15 @@ public class HabrSearchService implements SiteSearchService {
     public List<HabrUser> searchUsersByName(String name) {
         Document doc = getDocumentFromLink(USER_SEARCH + name);
         List<HabrUser> users = new ArrayList<>();
-        Elements results = doc.getElementById("peoples").select("li");
-        for (Element result : results) {
-            result = result.selectFirst(RESULT_USER_NAME);
-            String fullName = result.text();
-            String nick = result.attr("href").split("/")[5];
-            users.add(HabrUser.builder().fullName(fullName).nickName(nick).build());
+        Element peoples = doc.getElementById("peoples");
+        if (peoples != null) {
+            Elements results = peoples.select("li");
+            for (Element result : results) {
+                result = result.selectFirst(RESULT_USER_NAME);
+                String fullName = result.text();
+                String nick = result.attr("href").split("/")[5];
+                users.add(HabrUser.builder().fullName(fullName).name(nick).build());
+            }
         }
         return users;
     }
@@ -72,11 +75,14 @@ public class HabrSearchService implements SiteSearchService {
     private List<String> searchTargetByName(String name, String target) {
         Document doc = getDocumentFromLink(HUBS_AND_COMPANIES_SERARCH + name);
         List<String> targets = new ArrayList<>();
-        Elements results = doc.getElementById("hubs").select("li");
-        for (Element result : results) {
-            result = result.selectFirst(RESULT_TITLE);
-            if (result.attr("href").contains(target)) {
-                targets.add(result.text());
+        Element hubs = doc.getElementById("hubs");
+        if (hubs != null) {
+            Elements results = hubs.select("li");
+            for (Element result : results) {
+                result = result.selectFirst(RESULT_TITLE);
+                if (result.attr("href").contains(target)) {
+                    targets.add(result.text());
+                }
             }
         }
         return targets;
